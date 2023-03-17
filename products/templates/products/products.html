@@ -14,11 +14,13 @@
 
             <h1 class="my-4">Store</h1>
             <div class="list-group">
+                
                 {%for el in categories%}
                 
-                <a href="#" class="list-group-item">{{el.title}}</a>
+                    <a href="{%url 'products:category' el.id  %}" class="list-group-item">{{el.title}}</a>
                 
                 {%endfor%}
+                
             </div>
 
         </div>
@@ -57,48 +59,60 @@
             </div>
 
             <div class="row">
-                {%for el in products%}
-                <div class="col-lg-4 col-md-6 mb-4">
-                    <div class="card h-100">
-                        <a href="#">
-                            <img class="card-img-top" src="{{el.image.url}}" alt="">
-                        </a>
-                        <div class="card-body">
-                            <h4 class="card-title">
-                                <a href="#">{{el.title}}</a>
-                            </h4>
-                            <h5>{{el.price}} руб.</h5>
-                            <p class="card-text">{{el.description}}</p>
-                        </div>
-                        <div class="card-footer text-center">
-                            <a class='btn btn-outline-success' href="{% url 'products:basket_add' el.id%}">
-                                Отправить в корзину
-                                
+                {%if length%}
+                    <div class="text=center">
+                        <p class="card-text">Извините, в этой категории пока что нет товаров</p>
+                    </div>
+                {%else%}
+                    {%for el in object_list%}
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <div class="card h-100">
+                            <a href="#">
+                                <img class="card-img-top" src="{{el.image.url}}" alt="">
                             </a>
-                            
+                            <div class="card-body">
+                                <h4 class="card-title">
+                                    <a href="#">{{el.title}}</a>
+                                </h4>
+                                <h5>{{el.price}} руб.</h5>
+                                <p class="card-text">{{el.description}}</p>
+                            </div>
+                            <div class="card-footer text-center">
+                                <a class='btn btn-outline-success' href="{% url 'products:basket_add' el.id%}">
+                                    Отправить в корзину
+                                    
+                                </a>
+                                
+                            </div>
                         </div>
                     </div>
-                </div>
-                {%endfor%}
+                    {%endfor%}
+                {%endif%}
             </div>
 
 
 
         </div>
-
-        <nav aria-label="Page navigation example">
-            <ul class="pagination justify-content-center">
-                <li class="page-item disabled">
-                    <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
-                </li>
-                <li class="page-item"><a class="page-link" href="#">1</a></li>
-                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                <li class="page-item"><a class="page-link" href="#">3</a></li>
-                <li class="page-item">
-                    <a class="page-link" href="#">Next</a>
-                </li>
-            </ul>
-        </nav>
+        {% if is_paginated%}
+            <nav aria-label="Page navigation example">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item {%if not page_obj.has_previous%} disabled {%endif%}">
+                        <a class="page-link" href="{%if page_obj.has_previous%} {%url 'products:paginator' page_obj.previous_page_number%} {%else%} # {%endif%}" tabindex="-1" aria-disabled="true">Предыдущая</a>
+                    </li>
+                    {%for page in paginator.page_range%}
+                        <li class="page-item">
+                            <a class="page-link" href="{%url 'products:paginator' page%}">
+                                {{page}}
+                            </a>
+                        </li>
+                    {%endfor%}
+                    
+                    <li class="page-item {%if not page_obj.has_next%} disabled {%endif%}">
+                        <a class="page-link" href="{%if page_obj.has_next%} {%url 'products:paginator' page_obj.next_page_number%} {%else%} # {%endif%}">Следующая</a>
+                    </li>
+                </ul>
+            </nav>
+        {%endif%}
 
     </div>
 
