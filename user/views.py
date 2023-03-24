@@ -1,5 +1,7 @@
+
 from django.shortcuts import render, HttpResponseRedirect
-from user.models import User
+from django.views.generic.base import TemplateView
+from user.models import User, EmailVerification
 from user.forms import UserLoginForm, UserRegisterForm, UserProfileForm
 from django.contrib import auth, messages
 from django.urls import reverse,reverse_lazy
@@ -37,9 +39,25 @@ class UserProfileView(CommonContextMixin,UpdateView):
         return reverse_lazy('user:profile',args=(self.object.id,))                    
 
 
-    def get_context_data(self, **kwargs):
-        context=super(UserProfileView,self).get_context_data()
+    # def get_context_data(self, **kwargs):
+    #     context=super(UserProfileView,self).get_context_data()
         
-        context['basket']= Basket.objects.filter(user=self.object)                     #self.object т.к. мы передаем в model модель user, то мы можем сразу ссылаться на нее через self.object
-        return context
+    #     context['basket']= Basket.objects.filter(user=self.object)                     #self.object т.к. мы передаем в model модель user, то мы можем сразу ссылаться на нее через self.object
+    #     return context
+                                #сделали basket глобальной переменной, так как сделали контекстный процессор, смотри context_processors.py
 
+
+class EmailVerificationView(CommonContextMixin, TemplateView):
+    title='Store-Подтверждение электронной почты'
+    template_name='user/email_verification.html'
+    def get(self, request, *args, **kwargs):
+        code=kwargs.get('code')
+        user=User.objects.get(email=kwargs['email'])
+        email_verifications=EmailVerification.objects.filter(user=user,code=code)
+        if email_verifications.exists() and not email_verifications.first().is_expired():
+            user.is_verified_email=True
+            user.save()
+            return super(EmailVerificationView,self).get(request, *args, **kwargs)
+        else:
+            return HttpResponseRedirect(reverse('index'))
+        

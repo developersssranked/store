@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-qc+!#rt51yu7efbl4y=h&4)^xrrihj51nmyp)0y*papw7vu!x-
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
+DOMAIN_NAME="http://127.0.0.1:8000"
 
 # Application definition
 
@@ -64,6 +64,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'products.context_processors.baskets',
             ],
         },
     },
@@ -134,3 +135,15 @@ AUTH_USER_MODEL = 'user.User'
 LOGIN_URL='/userlogin/'
 LOGIN_REDIRECT_URL='/'
 LOGOUT_REDIRECT_URL='/'
+
+
+
+
+#Sending emails
+
+EMAIL_HOST = 'smtp.yandex.ru'
+EMAIL_PORT = 465
+EMAIL_HOST_USER = "clothe5store@yandex.ru"
+EMAIL_HOST_PASSWORD = "nizeglsotzhanolg"
+EMAIL_USE_TLS = False
+EMAIL_USE_SSL = True
